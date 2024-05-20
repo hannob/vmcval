@@ -1,0 +1,116 @@
+#!/usr/bin/python3
+
+import argparse
+import base64
+import gzip
+import lzma
+from io import BytesIO
+
+import lxml
+from cryptography import x509
+from lxml import etree
+
+rng = "{Wp48S^xk9=GL@E0stWa8~^|S5YJf5;p|iiw_N}p56g!U*v@8=4}%`c{d+Uif9bc{C^2>=W*|)}3\
+2kckDR4M2=gb{e7M?QS%=gTj;sgl;hetjNb{GB-GRemA!#C;|TU7>mnQ^w@Jd1lnIDhkSJ8*LO9M\
+iH5veC29i}O=0?};qG0(nz<fv>kkt%!u4p+S52!g&bJ!2Roror~gy8foTlIB4bwl9&47=w49CGWf\
+38h9>^tN?wDTm`@mZ-Nf=3pYDL{G+}w_dT6=?oSe4IG(bXxV7u|1q4Lsd>Hvs?k$;#&Cy`>FFCdQ\
+KIONu|sz!^LbQz0`96;#!n3-R@h{5_#fupEwDy@~R+DU=h?$>hT?rj#_ee~~nI67cf0>D5h#uO;a\
+cc2n#w8`f5Uv9%?(Y~M?e0)aZ!H4AxEYiFEjstk%jyYkF`je0JH9UXwEd1IU1<AET)XiBbH86NTW\
+e-?^;uOPd2HTnxM1TDqDamo6b=@DLu`uEhP(qB6xO~!0tr#H$+QSg_IlCN?^k0of_Wn30-V+Sne@\
+Eh@l?By#C=JH;H=a<F*u)VKh2X#=iY&$bEojZu`NWMs7CrP9F50al(O!8!hpy=jY&6}fw*r%@!!O\
+&~uS$f4LIbY7@*ZyS`sJpv@-8;2H@@PG#%2nQ(miG;s-Cu>Z~dk-8w7+^jq*;}?Nmb#bM4I-p>i1\
+)*N3)q24U@uI3^#C5kF3}n*!mz>drs!fN;opetO3#@!rdDOyW}B`>}>x4D=8%uu-_?7~CX%S?dwl\
+U|mqK?t>bOqB_#A_CsR-Kcu-|t8Wa5xyC{1F<{c34g5}gRat)WkQvxFFxK~IAd(<oR8Tt@g*s5=k\
+&a~@E@u~7x#;zPjPkFi%I__uDDKf)C6BJwcQ2-b=5^T+cp*ncXAtIsjZwIyr()wxk1DV%q6!a1&$\
+$Ytqr}ND-E?5dfuUI3Zp|Qu^q4g-qdS8W{3y7|usz~v(GU+nq%-MXjtPO{qHCH5&%*mcw-v+BXK@\
+7?OHVW1wI#)ekjm~Fu+|^~59-h(u<2!l8%*OcG|`*ZJG(&hNRBX2bnQ#o@4`g+mvwnQfxZ*-0$53\
+`MvWa|VugCz#+#`nVApLqYgXfS7#7V;!Eci2tQpUXQq(&1Jew{|9QV0(uE8vYEkW@VuJ=%ukpq>i\
+Z?`KgF{uCp2p#(Yu1Brhy{$D^6S_K<HN^H=!Cw@or80BX`n_9b<?!g@#N!*!zj}`Gu1Z(aO7XEGG\
+eo7DR_wR*BYirU)%<)gj1<$bE770BH=>uIHUvm)nx*MQ2;(*hNV;Erh*J9t0;D<Fqxgb3vq$eR!b\
+zO5)Md}}r(EcNAHF<#u9?$A8@iDHiYjD=eQk~Cpxg9X8j)q?6?%~f?^qE*E&du8ADT<!8Z0v&DTc\
+Dzyyh)?zz=o-s|vu-sFzINn&7mAV|Rn$v$o`xM#%gh?Ob$+mX|Rz;ZKhY;BMzN-m_#I;$gJMLml?\
+~%-+HN&i|kX8gD7UWy3mMX=&xp_jWC~GI!bQFEYbh%F<b5ZB<4r(8U7xH`pqv*8>{CWys4oDcPF}\
+$$xy}nczdB>U$ogkb84{LcnE>0uw33EIQ^E@!iM-{EvYXPrc0ee)@BRTi*m2(X>1sK(FeR{i4snG\
+l=`ND<AZfNmVtL=y!{BVb|ah?-`}tiV|A8T=E~HF!q}^^Dtj($CD~f&$%(VD<VuxweQ~WR_BeP-L\
+@t<NXI9&OoY+2c5fsfu{k9Vk<_^aJ6pU@TBkK-44wv5Q{_A8bhE4-n%NfF4vJH07-IjW*ak>4(qK\
+kr)uaicdpCBE10x6TWi_%^H-QuDk!Yr&1`~4h<jA9*9%LPYK?Wg+e_RlslPY~E-yO$aEX$>`{)cJ\
+Uzpy~33OHnw*iM82IZV=_A-Y(P09lwy#B5z_BM}qpU0HSCq2LFgL@AX0Ya%&CPTT+`VOClJ!GC<%\
+D95EXv%syVT_*WV<9CKRu^$C0X49sT>ZU=-qgO13Q^trVLV0az>tk-varTWLvcr@4R8YV70>5(Gq\
+C9kvMo{T{q}d@=LT{0!F9%c>-%ia2wte@3WOb$H9QMPPER#BL6T%kC&ErW6<nK}FQZ98XI2&bqFR\
+|Ao`0trDb(y0t>PXGW8k&wfXgQx(ge0Qo%0LR<8zWpurW#-@iugcT?M0{jG=ek##KhtVZ_Tzv26C\
++t>xcTMSa4lF{5dtg=;ji-4<Md50o7tJgt3^&kU;&blRr2Q^s2hU;P{rznx+l@{l_NF2xZafqTdm\
+CjW5#WgF*B^M?qSZ%$A_6v@Ybq-F;r!-cO&+QUy~DpJUXOs0*Nc*{97-;kQcDq&H)|eyR<3U1_)4\
+-hBp(Z4mC?Xr11P(|<JWVZ6HtYRw@4yrwR%>tWPRefPebW~XcnFb9H&8@?;3oe=gs5#n>tc0b)t)\
+)i42QCDl@;+=rxwEsAnx3Us5VDqx{RtLt3zZxz^OcFPYH&$8NbG=DqW-{h5!v%c=E<1*494#KurI\
+8Raj(V34P$FA@2D1&ic4w8`*o;^LHlO<Jv?fgL+?$aaEh0$iySONwb3OujfiO&zw<cBw!>&#uG(V\
+?|I~<0_s8uXr=A#D<GXvZxi7PmQsCLR{z)XNd=ukWKo`;jbRtHYFhTUHh&)tWp-`Lj(yfryi;Tx_\
+L>)!%#dzU%&1KC8~tT)DUo3S)ns|p$)3k}RPcWD$B;9oFui)siptc+xyV|ZO;B%H&voD_xA>Z84D\
+FiAWjbC9IuVq=e+G(y)9qmo_tYf@jX;<*f|;B0B$ffp&1a34b^u@PqdK<P^_A~cx(ZCTk!%C<I7*\
+OFI;h9f+L(;kd-bCu7<C*mwubYI#K8P$-_*i4z{{9P6`(<DX`SVF#59qozBp-pY(yo-gu)ugjr_<\
+SLx)qF-;I$|c_*>w->3N|7Au1OOAtvpg;P1t6R^1m$Er{<r=yv&|8<D6)9Vd&pm&<aa~eB7OdMpP\
+6jUzn)ma&3kQXv3^oV?Vj~o|slXaE6oWJDo5nGx-^B>POwiP|cP2zS105u3lj}>KpPCRiiTM(Jo|\
+z3Y)u=KkG*rJO%Ynn473ev`#|5;`vM~X}BC*KB2R(I)hIn3{^%$;M6LWNTlh(-o-pPemqf1=!(K0\
+X7(f+tnslo@(L|hyBqzE3U_m-RJ~EUG^iW_mdmSYHYFHa+UFmmLr1wL7{3^Gc#A;QG40$KBjk$Yy\
+wage{3y^=R}@nAj}t>@QWNFUxuF<+KmY&$IKwP{*m9*R00Gkz)z}9B>g?{VvBYQl0ssI200dcD"
+
+
+def getbimisvg(cdata, der=False):
+    if der:
+        cert = x509.load_der_x509_certificate(cdata)
+    else:
+        cert = x509.load_pem_x509_certificate(cdata)
+    try:
+        ext = cert.extensions.get_extension_for_oid(
+            x509.ObjectIdentifier("1.3.6.1.5.5.7.1.12")
+        )
+    except:
+        print("No Logo")
+        return False
+    logo = ext.value.value.decode(errors="ignore")
+    try:
+        logo = logo.split("data:image/svg+xml;base64,")[1]
+    except IndexError:
+        return "crtinvalid"
+    logo = base64.b64decode(logo)
+    logo = gzip.decompress(logo)
+    return logo
+
+
+if __name__ == "__main__":
+
+    ap = argparse.ArgumentParser()
+    ap.add_argument("files", nargs="+")
+    ap.add_argument("-d", "--der", action="store_true")
+    ap.add_argument("-v", "--verbose", action="store_true")
+    ap.add_argument("-s", "--save")
+    args = ap.parse_args()
+
+    svgps = base64.b85decode(rng)
+    svgps = lzma.decompress(svgps)
+
+    frng_doc = etree.parse(BytesIO(svgps))
+    relaxng = etree.RelaxNG(frng_doc)
+
+    for fn in args.files:
+        with open(fn, "rb") as f:
+            cdata = f.read()
+
+        svg = getbimisvg(cdata, der=args.der)
+        if args.save:
+            with open(args.save, "wb") as f:
+                f.write(svg)
+
+        try:
+            xlogo = etree.parse(BytesIO(svg))
+        except lxml.etree.XMLSyntaxError as e:
+            ret = "xmlbroken"
+        if relaxng.validate(xlogo):
+            ret = "valid"
+        else:
+            ret = "invalid"
+
+        if args.verbose or ret != "valid":
+            print(f"{fn} {ret}")
+
+        if args.verbose and ret == "invalid":
+            print(relaxng.error_log.last_error)
