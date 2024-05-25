@@ -1,0 +1,6 @@
+# Invalid BIMI certs issued by Digicert,
+# IDs for crt.sh, https://crt.sh/?id=[id]
+4990144980
+4990145017
+4990145089
+4990145101
