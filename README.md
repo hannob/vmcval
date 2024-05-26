@@ -9,7 +9,7 @@ See https://mailarchive.ietf.org/arch/msg/bimi/xzYRH72V2HE9xeUfXK_zUgYSI7k/
 
 # ceterum censeo
 
-BIMI is bad, do not implement or use it.
+[BIMI is bad](https://nobimi.secvuln.info/), do not implement or use it.
 
 # author
 
