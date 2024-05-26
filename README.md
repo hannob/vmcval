@@ -7,6 +7,10 @@ SVG Tiny PS (Portable/Secure) Relax NG schema.
 
 See https://mailarchive.ietf.org/arch/msg/bimi/xzYRH72V2HE9xeUfXK_zUgYSI7k/
 
+# ceterum censeo
+
+BIMI is bad, do not implement or use it.
+
 # author
 
 [Hanno Böck](https://itsec.hboeck.de/)
