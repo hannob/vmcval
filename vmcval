@@ -102,6 +102,9 @@ if __name__ == "__main__":
             with open(args.save, "wb") as f:
                 f.write(svg)
 
+        if len(svg) > 32768:
+            print(f"WARNING: SVG exceeds 32KB ({len(svg)}B)")
+
         try:
             xlogo = etree.parse(BytesIO(svg))
         except lxml.etree.XMLSyntaxError as e:
