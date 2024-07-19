@@ -82,6 +82,7 @@ if __name__ == "__main__":
     ap.add_argument("-d", "--der", action="store_true")
     ap.add_argument("-v", "--verbose", action="store_true")
     ap.add_argument("-s", "--save")
+    ap.add_argument("--svg", action="store_true")
     args = ap.parse_args()
 
     svgps = base64.b85decode(rng)
@@ -94,7 +95,10 @@ if __name__ == "__main__":
         with open(fn, "rb") as f:
             cdata = f.read()
 
-        svg = getbimisvg(cdata, der=args.der)
+        if args.svg:
+            svg = cdata
+        else:
+            svg = getbimisvg(cdata, der=args.der)
         if svg == "nosvg" or svg == "nologo":
             print(f"{fn} {svg}")
             continue
