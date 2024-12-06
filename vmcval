@@ -63,7 +63,7 @@ def getbimisvg(cdata, der=False):
         ext = cert.extensions.get_extension_for_oid(
             x509.ObjectIdentifier("1.3.6.1.5.5.7.1.12")
         )
-    except:
+    except x509.extensions.ExtensionNotFound:
         return "nologo"
     logo = ext.value.value.decode(errors="ignore")
     try:
@@ -71,8 +71,7 @@ def getbimisvg(cdata, der=False):
     except IndexError:
         return "nosvg"
     logo = base64.b64decode(logo)
-    logo = gzip.decompress(logo)
-    return logo
+    return gzip.decompress(logo)
 
 
 if __name__ == "__main__":
@@ -99,7 +98,7 @@ if __name__ == "__main__":
             svg = cdata
         else:
             svg = getbimisvg(cdata, der=args.der)
-        if svg == "nosvg" or svg == "nologo":
+        if svg in ("nosvg", "nologo"):
             print(f"{fn} {svg}")
             continue
         if args.save:
@@ -111,7 +110,7 @@ if __name__ == "__main__":
 
         try:
             xlogo = etree.parse(BytesIO(svg))
-        except lxml.etree.XMLSyntaxError as e:
+        except lxml.etree.XMLSyntaxError:
             ret = "xmlbroken"
         if relaxng.validate(xlogo):
             ret = "valid"
